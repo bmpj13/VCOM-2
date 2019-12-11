@@ -1,0 +1,12 @@
+.DS_store
+__pycache__/
+weights/
+
+# LNDb
+lndb/data/
+lndb/folds/
+lndb/mask_cubes/
+lndb/masks/
+lndb/scan_cubes/
+lndb/submission/
+lndb/trainset_csv/
