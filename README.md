@@ -1,6 +1,8 @@
 ## How to run
 
 1. Download the dataset and put each folder in the corresponding one inside _lndb/_
+    
+    - Every folder except _folds_, _scan_cubes_ and mask_cubes_ should be filled
 
 2. On the terminal (starting in project's root directory):
 
