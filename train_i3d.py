@@ -4,27 +4,16 @@ import os
 import keras
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling3D
-from sklearn.model_selection import train_test_split
 from models.i3d import Inception_Inflated3d as I3D
-from data_generator import DataGenerator
 from math import ceil
 from constants import TRAIN_NODULES_PATH, SCAN_CUBES_PATH
+from data_handler import get_train_nodules_generators
 
 BATCH_SIZE = 32
 IMAGE_SIZE = 80
-
 seed = 1
 
-# Read CSV file
-df = pd.read_csv(TRAIN_NODULES_PATH, nrows=100, error_bad_lines=True)
-df['filename'] = df.apply(lambda row: 'LNDb-{:04}_finding{}_rad{}.npy'.format(int(row['LNDbID']), int(row['FindingID']), int(row['RadID'])), axis=1)
-df = df.sample(frac=1).reset_index(drop=True)
-classes = sorted(pd.unique(df['Text']))
-
-X_train, X_valid, y_train, y_valid = train_test_split(df['filename'], df['Text'], random_state=seed, shuffle=True, stratify=df['Text'])
-
-training_generator = DataGenerator(SCAN_CUBES_PATH + X_train, y_train, BATCH_SIZE, classes)
-validation_generator = DataGenerator(SCAN_CUBES_PATH + X_train, y_train, BATCH_SIZE, classes)
+training_generator, validation_generator, _, _, df, classes = get_train_nodules_generators(nrows=100, seed=seed, shuffle=True, batch_size=BATCH_SIZE, path_prefix=SCAN_CUBES_PATH)
 
 # Load the I3D model
 base_model = I3D(weights='rgb_imagenet_and_kinetics', include_top=False, input_shape=(IMAGE_SIZE, IMAGE_SIZE, IMAGE_SIZE, 3))

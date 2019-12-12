@@ -11,4 +11,4 @@
         $ python3 getNoduleCubes.py
             (run the others to check if everything's ok)
         $ cd ../..
-        $ python3 test.py
+        $ python3 i3d.py
