@@ -28,6 +28,9 @@ print(mask_cube.shape)
 print()
 
 
+# Remove nodule's surrounding by its mask
+# scan_cube[mask_cube == 0] = scan_cube.min()
+
 # Transform scan_cube
 scan_cube = scan_cube.astype(np.float64)
 scan_cube = (scan_cube - scan_cube.min()) * (255.0 / (scan_cube.max() - scan_cube.min()))
