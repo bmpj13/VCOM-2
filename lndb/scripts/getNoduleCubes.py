@@ -34,6 +34,8 @@ def computeDescriptors(scan_cube):
 
     descriptors3d = np.array(descriptors3d, dtype=np.float64)
 
+    return descriptors3d
+
 
 lndloaded = -1
 for n in nodules:
@@ -86,5 +88,5 @@ for n in nodules:
             
             # Save descriptors
             descriptors = computeDescriptors(scan_cube)
-            np.save('../descriptor_cubes/LNDb-{:04d}_finding{}_rad{}.npy'.format(lnd,radfinding,rad), mask_cube)
+            np.save('../descriptors/LNDb-{:04d}_finding{}_rad{}.npy'.format(lnd,radfinding,rad), descriptors)
         

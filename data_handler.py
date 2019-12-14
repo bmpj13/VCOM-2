@@ -2,7 +2,7 @@ import sys
 import pandas as pd
 from constants import TRAIN_NODULES_PATH, SCAN_CUBES_PATH
 from sklearn.model_selection import train_test_split
-from data_generator import ScanDataGenerator, MultimodalDataGenerator
+from data_generator import ScanDataGenerator, MultimodalDataGenerator, DescriptorsDataGenerator
 
 def getTrainNodules(path = TRAIN_NODULES_PATH, nrows = None):
     df = pd.read_csv(path, nrows=nrows, error_bad_lines=True)
@@ -38,6 +38,9 @@ def getDataGenerators(train, valid, classes, method = 'scan_cubes', batch_size =
     elif method == 'multimodal':
         training_generator = MultimodalDataGenerator(X_train, y_train, batch_size, classes)
         validation_generator = MultimodalDataGenerator(X_valid, y_valid, batch_size, classes)
+    elif method == 'descriptors':
+        training_generator = DescriptorsDataGenerator(X_train, y_train, batch_size, classes)
+        validation_generator = DescriptorsDataGenerator(X_valid, y_valid, batch_size, classes)
     else:
         sys.exit('Method not available')
 

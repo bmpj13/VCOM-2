@@ -10,6 +10,6 @@ lndb/masks/**
 lndb/scan_cubes/**
 lndb/submission/**
 lndb/trainset_csv/**
-lndb/descriptor_cubes/**
+lndb/descriptors/**
 
 !/lndb/**/.gitkeep

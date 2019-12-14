@@ -9,16 +9,14 @@ from models.i3d import Inception_Inflated3d as I3D
 from math import ceil
 from constants import TRAIN_NODULES_PATH, SCAN_CUBES_PATH
 from data_handler import getTrainNodules, splitData, getDataGenerators
-from data_generator import getMaskRGB
 
 BATCH_SIZE = 32
 IMAGE_SIZE = 80
 DROPOUT_PROB = 0.2
-seed = 1
 
 def run(method, nrows, epochs):
     df, classes = getTrainNodules(TRAIN_NODULES_PATH, nrows = nrows)
-    train, valid = splitData(df, seed=seed, shuffle=True)
+    train, valid = splitData(df, shuffle=True)
     training_generator, validation_generator = getDataGenerators(train, valid, classes, method=method, batch_size=BATCH_SIZE)
 
     # Load the I3D model (for scan modality)
