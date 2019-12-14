@@ -45,7 +45,7 @@ def run(method, nrows, epochs):
 
     # Merge subnetworks
     x = concatenate([x1, x2])
-    x = Dense(1024, activation='relu')(x)
+    x = Dense(2048, activation='relu')(x)
     predictions = Dense(len(classes), activation='softmax')(x)
 
     model = Model(inputs=[base_model1.input, base_model2.input], outputs=predictions)
