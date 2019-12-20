@@ -9,8 +9,24 @@ def getTrainNodules(path = TRAIN_NODULES_PATH, nrows = None):
 
     file_str = lambda lndbid, findid, radid: 'LNDb-{:04}_finding{}_rad{}.npy'.format(int(lndbid), int(findid), int(radid))
     df['filename'] = df.apply(lambda row: file_str(row['LNDbID'], row['FindingID'], row['RadID']), axis=1)
+    df['Text'].astype(int)
 
-    classes = sorted(pd.unique(df['Text']))
+    # Group texture values as in the specification
+    isNonNodule = df['Text'] == 0
+    isGGO = (df['Text'] == 1) | (df['Text'] == 2)
+    isPartSolid = df['Text'] == 3
+    isSolid = (df['Text'] == 4) | (df['Text'] == 5)
+
+    df.loc[isNonNodule, 'Text'] = 'Non-Nodule'
+    df.loc[isGGO, 'Text'] = 'GGO'
+    df.loc[isPartSolid, 'Text'] = 'Part Solid'
+    df.loc[isSolid, 'Text'] = 'Solid'
+    
+    # Order texture values
+    order_dict = {'Non-Nodule': 0, 'GGO': 1, 'Part Solid': 2, 'Solid': 3}
+    df = df.iloc[df['Text'].map(order_dict).argsort()]
+
+    classes = pd.unique(df['Text'])
 
     return df, classes
 
@@ -45,3 +61,10 @@ def getDataGenerators(train, valid, classes, method = 'scan_cubes', batch_size =
         sys.exit('Method not available')
 
     return training_generator, validation_generator
+
+
+
+if __name__ == '__main__':
+    df, classes = getTrainNodules()
+    print(df)
+    print(classes)
