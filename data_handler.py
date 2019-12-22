@@ -1,8 +1,15 @@
 import sys
 import pandas as pd
-from constants import TRAIN_NODULES_PATH, SCAN_CUBES_PATH
+from constants import TRAIN_NODULES_PATH, SCAN_CUBES_PATH, FOLDS_PATH
 from sklearn.model_selection import train_test_split
 from data_generator import ScanDataGenerator, MultimodalDataGenerator, DescriptorsDataGenerator
+
+def getFoldNodules(path = FOLDS_PATH, nrows = None, fold = 0):
+    filename = '{}fold{}_Nodules.csv'.format(path, fold)
+
+    df_train = getTrainNodules(filename, nrows)
+    print(df_train)
+
 
 def getTrainNodules(path = TRAIN_NODULES_PATH, nrows = None):
     df = pd.read_csv(path, nrows=nrows, error_bad_lines=True)
@@ -17,14 +24,10 @@ def getTrainNodules(path = TRAIN_NODULES_PATH, nrows = None):
     isPartSolid = df['Text'] == 3
     isSolid = (df['Text'] == 4) | (df['Text'] == 5)
 
-    df.loc[isNonNodule, 'Text'] = 'Non-Nodule'
-    df.loc[isGGO, 'Text'] = 'GGO'
-    df.loc[isPartSolid, 'Text'] = 'Part Solid'
-    df.loc[isSolid, 'Text'] = 'Solid'
-    
-    # Order texture values
-    order_dict = {'Non-Nodule': 0, 'GGO': 1, 'Part Solid': 2, 'Solid': 3}
-    df = df.iloc[df['Text'].map(order_dict).argsort()]
+    df.loc[isNonNodule, 'Text'] = 0
+    df.loc[isGGO, 'Text'] = 1
+    df.loc[isPartSolid, 'Text'] = 2
+    df.loc[isSolid, 'Text'] = 3
 
     classes = pd.unique(df['Text'])
 
