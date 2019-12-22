@@ -9,5 +9,6 @@
         $ pip3 install requirements.txt
         $ cd lndb/scripts
         $ python3 getNoduleCubes.py (run the others to check if everything's ok)
+        $ python3 getFolds.py
         $ cd ../..
         $ python3 train_i3d.py

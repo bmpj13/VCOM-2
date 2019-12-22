@@ -35,4 +35,8 @@ def getFold(fold = 0, fname_in = '../trainset_csv/trainFolds.csv',
             
 if __name__ == "__main__":
     # Get fold 0 from trainset
-    getFold(fold=0)
+    # getFold(fold=0)
+    getFold(fold=0, fnames=['Nodules.csv'])
+    getFold(fold=1, fnames=['Nodules.csv'])
+    getFold(fold=2, fnames=['Nodules.csv'])
+    getFold(fold=3, fnames=['Nodules.csv'])

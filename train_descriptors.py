@@ -4,19 +4,18 @@ import argparse
 import keras
 from keras.models import Model, Sequential
 from keras.layers import Dense, Dropout, GlobalAveragePooling1D
-from data_handler import getTrainNodules, splitData, getDataGenerators
+from data_handler import getTrainNodules, splitData, getDataGenerators, getFoldNodules
 from constants import TRAIN_NODULES_PATH
 from math import ceil
 
 BATCH_SIZE = 32
 IMAGE_SIZE = 80
 DROPOUT_PROB = 0.2
+NUM_FOLDS = 4
 INPUT_SHAPE = (None, 32)
 
 def run(method, nrows, epochs):
-    df, classes = getTrainNodules(TRAIN_NODULES_PATH, nrows = nrows)
-    train, valid = splitData(df, shuffle=True)
-    training_generator, validation_generator = getDataGenerators(train, valid, classes, method=method, batch_size=BATCH_SIZE)
+    _, classes = getTrainNodules(TRAIN_NODULES_PATH, nrows = nrows)
 
     model = Sequential()
     model.add(Dense(1024, activation='relu', input_shape=INPUT_SHAPE))
@@ -29,17 +28,25 @@ def run(method, nrows, epochs):
 
     model.summary()
 
-    # Fit model
-    model.fit_generator(
-        generator=training_generator,
-        steps_per_epoch=ceil(0.75 * (df.size / BATCH_SIZE)),
+    print()
+    print()
+    for fold in range(0, NUM_FOLDS):
+        train, valid = getFoldNodules(nrows=nrows, fold=fold, shuffle=True)
+        training_generator, validation_generator = getDataGenerators(train, valid, classes, method=method, batch_size=BATCH_SIZE)
 
-        validation_data=validation_generator,
-        validation_steps=ceil(0.25 * (df.size / BATCH_SIZE)),
+        # Fit model
+        print('Fold', fold)
+        model.fit_generator(
+            generator=training_generator,
+            steps_per_epoch=ceil(train[0].size / BATCH_SIZE),
 
-        epochs=epochs,
-        verbose=1
-    )
+            validation_data=validation_generator,
+            validation_steps=ceil(valid[0].size / BATCH_SIZE),
+
+            epochs=epochs,
+            verbose=1
+        )
+        print()
 
     model.save('weights/descriptors.h5')
 

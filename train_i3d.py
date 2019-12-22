@@ -8,16 +8,19 @@ from keras.layers import Dense, GlobalAveragePooling3D, Dropout
 from models.i3d import Inception_Inflated3d as I3D
 from math import ceil
 from constants import TRAIN_NODULES_PATH, SCAN_CUBES_PATH
-from data_handler import getTrainNodules, splitData, getDataGenerators
+from data_handler import getTrainNodules, splitData, getDataGenerators, getFoldNodules
 
 BATCH_SIZE = 32
 IMAGE_SIZE = 80
 DROPOUT_PROB = 0.2
+NUM_FOLDS = 4
 
 def run(method, nrows, epochs):
-    df, classes = getTrainNodules(TRAIN_NODULES_PATH, nrows = nrows)
-    train, valid = splitData(df, shuffle=True)
-    training_generator, validation_generator = getDataGenerators(train, valid, classes, method=method, batch_size=BATCH_SIZE)
+    # df, classes = getTrainNodules(TRAIN_NODULES_PATH, nrows = nrows)
+    # train, valid = splitData(df, shuffle=True)
+    # training_generator, validation_generator = getDataGenerators(train, valid, classes, method=method, batch_size=BATCH_SIZE)
+
+    _, classes = getTrainNodules(TRAIN_NODULES_PATH, nrows=None)
 
     # Load the I3D model
     base_model = I3D(weights='rgb_imagenet_and_kinetics', include_top=False, input_shape=(IMAGE_SIZE, IMAGE_SIZE, IMAGE_SIZE, 3), dropout_prob=DROPOUT_PROB)
@@ -41,18 +44,25 @@ def run(method, nrows, epochs):
     print ("Final Model summary")
     model.summary()
 
+    print()
+    print()
+    for fold in range(0, NUM_FOLDS):
+        train, valid = getFoldNodules(nrows=nrows, fold=fold, shuffle=True)
+        training_generator, validation_generator = getDataGenerators(train, valid, classes, method=method, batch_size=BATCH_SIZE)
 
-    # Fit model
-    model.fit_generator(
-        generator=training_generator,
-        steps_per_epoch=ceil(0.75 * (df.size / BATCH_SIZE)),
+        # Fit model
+        print('Fold', fold)
+        model.fit_generator(
+            generator=training_generator,
+            steps_per_epoch=ceil(train[0].size / BATCH_SIZE),
 
-        validation_data=validation_generator,
-        validation_steps=ceil(0.25 * (df.size / BATCH_SIZE)),
+            validation_data=validation_generator,
+            validation_steps=ceil(valid[0].size / BATCH_SIZE),
 
-        epochs=epochs,
-        verbose=1
-    )
+            epochs=epochs,
+            verbose=1
+        )
+        print()
 
     model.save('weights/{}_i3d.h5'.format(method))
 

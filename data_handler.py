@@ -4,12 +4,6 @@ from constants import TRAIN_NODULES_PATH, SCAN_CUBES_PATH, FOLDS_PATH
 from sklearn.model_selection import train_test_split
 from data_generator import ScanDataGenerator, MultimodalDataGenerator, DescriptorsDataGenerator
 
-def getFoldNodules(path = FOLDS_PATH, nrows = None, fold = 0):
-    filename = '{}fold{}_Nodules.csv'.format(path, fold)
-
-    df_train = getTrainNodules(filename, nrows)
-    print(df_train)
-
 
 def getTrainNodules(path = TRAIN_NODULES_PATH, nrows = None):
     df = pd.read_csv(path, nrows=nrows, error_bad_lines=True)
@@ -32,6 +26,25 @@ def getTrainNodules(path = TRAIN_NODULES_PATH, nrows = None):
     classes = pd.unique(df['Text'])
 
     return df, classes
+
+def getFoldNodules(path = FOLDS_PATH, nrows = None, fold = 1, shuffle=False):
+    df, _ = getTrainNodules(TRAIN_NODULES_PATH)
+
+    filename = '{}fold{}_Nodules.csv'.format(path, fold)
+    df_train, _ = getTrainNodules(filename, nrows)
+
+    ids_valid = list( set(pd.unique(df['LNDbID'])) - set(pd.unique(df_train['LNDbID'])) )
+    df_valid = df[df['LNDbID'].isin(ids_valid)]
+    df_valid = df_valid.head(nrows)
+
+    if shuffle:
+        df_train = df_train.sample(frac=1).reset_index(drop=True)
+        df_valid = df_valid.sample(frac=1).reset_index(drop=True)
+
+    X_train, y_train = df_train['filename'], df_train['Text']
+    X_valid, y_valid = df_valid['filename'], df_valid['Text']
+
+    return (X_train, y_train), (X_valid, y_valid)
 
 def splitData(df, seed = None, shuffle = False):
     X_train, X_valid, y_train, y_valid = train_test_split(
