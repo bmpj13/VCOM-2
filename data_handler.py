@@ -31,11 +31,13 @@ def getFoldNodules(path = FOLDS_PATH, nrows = None, fold = 1, shuffle=False):
     df, _ = getTrainNodules(TRAIN_NODULES_PATH)
 
     filename = '{}fold{}_Nodules.csv'.format(path, fold)
-    df_train, _ = getTrainNodules(filename, nrows)
+    df_valid, _ = getTrainNodules(filename, nrows)
 
-    ids_valid = list( set(pd.unique(df['LNDbID'])) - set(pd.unique(df_train['LNDbID'])) )
-    df_valid = df[df['LNDbID'].isin(ids_valid)]
-    df_valid = df_valid.head(nrows)
+    ids_train = list( set(pd.unique(df['LNDbID'])) - set(pd.unique(df_valid['LNDbID'])) )
+    df_train = df[df['LNDbID'].isin(ids_train)]
+
+    if nrows is not None:
+        df_train = df_train.head(nrows)
 
     if shuffle:
         df_train = df_train.sample(frac=1).reset_index(drop=True)
