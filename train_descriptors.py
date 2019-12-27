@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import argparse
 import keras
+from keras.callbacks import CSVLogger
 from keras.models import Model, Sequential
 from keras.layers import Dense, Dropout, GlobalAveragePooling1D
 from data_handler import getTrainNodules, splitData, getDataGenerators, getFoldNodules
@@ -29,12 +30,13 @@ def run(method, nrows, epochs):
     model.summary()
 
     callbacks = [
-        keras.callbacks.EarlyStopping(
-            # Stop training when `val_loss` is no longer improving
-            monitor='val_loss',
-            # "no longer improving" being further defined as "for at least 20 epochs"
-            patience=20,
-            verbose=1)
+        # keras.callbacks.EarlyStopping(
+        #     # Stop training when `val_loss` is no longer improving
+        #     monitor='val_loss',
+        #     # "no longer improving" being further defined as "for at least 20 epochs"
+        #     patience=20,
+        #     verbose=1),
+        CSVLogger('results/descriptors.csv', append=True, separator=';')
     ]
 
     print()
@@ -54,7 +56,8 @@ def run(method, nrows, epochs):
 
             epochs=epochs,
             callbacks=callbacks,
-            verbose=1
+            shuffle=True,
+            verbose=1,
         )
         model.load_weights('weights/descriptors_initial.h5')
         print()

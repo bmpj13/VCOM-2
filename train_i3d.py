@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import argparse
 import keras
+from keras.callbacks import CSVLogger
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling3D, Dropout
 from models.i3d import Inception_Inflated3d as I3D
@@ -25,8 +26,8 @@ def run(method, nrows, epochs):
     # Load the I3D model
     base_model = I3D(weights='rgb_imagenet_and_kinetics', include_top=False, input_shape=(IMAGE_SIZE, IMAGE_SIZE, IMAGE_SIZE, 3), dropout_prob=DROPOUT_PROB)
 
-    for layer in base_model.layers:
-        layer.trainable = False
+    # for layer in base_model.layers:
+    #     layer.trainable = False
 
     # Add classification layers
     x = base_model.output
@@ -42,12 +43,13 @@ def run(method, nrows, epochs):
     model.summary()
 
     callbacks = [
-        keras.callbacks.EarlyStopping(
-            # Stop training when `val_loss` is no longer improving
-            monitor='val_loss',
-            # "no longer improving" being further defined as "for at least 20 epochs"
-            patience=20,
-            verbose=1)
+        # keras.callbacks.EarlyStopping(
+        #     # Stop training when `val_loss` is no longer improving
+        #     monitor='val_loss',
+        #     # "no longer improving" being further defined as "for at least 20 epochs"
+        #     patience=20,
+        #     verbose=1),
+        CSVLogger('results/{}_i3d.csv'.format(method), append=True, separator=';')
     ]
 
     print()
@@ -67,6 +69,7 @@ def run(method, nrows, epochs):
 
             epochs=epochs,
             callbacks=callbacks,
+            shuffle=True,
             verbose=1
         )
         model.load_weights('weights/{}_i3d_initial.h5'.format(method))

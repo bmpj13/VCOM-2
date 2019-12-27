@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import argparse
 import keras
+from keras.callbacks import CSVLogger
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling3D, Dropout, concatenate
 from models.i3d import Inception_Inflated3d as I3D
@@ -34,7 +35,7 @@ def run(method, nrows, epochs):
 
     for layer in base_model2.layers:
         layer.name = 'mask_' + layer.name
-        layer.trainable = False
+        # layer.trainable = False
 
     x2 = base_model2.output
     x2 = GlobalAveragePooling3D()(x2)
@@ -51,12 +52,13 @@ def run(method, nrows, epochs):
     model.summary()
 
     callbacks = [
-        keras.callbacks.EarlyStopping(
-            # Stop training when `val_loss` is no longer improving
-            monitor='val_loss',
-            # "no longer improving" being further defined as "for at least 20 epochs"
-            patience=20,
-            verbose=1)
+        # keras.callbacks.EarlyStopping(
+        #     # Stop training when `val_loss` is no longer improving
+        #     monitor='val_loss',
+        #     # "no longer improving" being further defined as "for at least 20 epochs"
+        #     patience=20,
+        #     verbose=1),
+        CSVLogger('results/multimodal.csv', append=True, separator=';')
     ]
 
     print()
@@ -76,6 +78,7 @@ def run(method, nrows, epochs):
 
             epochs=epochs,
             callbacks=callbacks,
+            shuffle=True,
             verbose=1
         )
         model.load_weights('weights/multimodal_initial.h5')
