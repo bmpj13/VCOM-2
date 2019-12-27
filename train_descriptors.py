@@ -38,6 +38,7 @@ def run(method, nrows, epochs):
     ]
 
     print()
+    model.save_weights('weights/descriptors_initial.h5')
     for fold in range(0, NUM_FOLDS):
         train, valid = getFoldNodules(nrows=nrows, fold=fold, shuffle=True)
         training_generator, validation_generator = getDataGenerators(train, valid, classes, method=method, batch_size=BATCH_SIZE)
@@ -55,6 +56,7 @@ def run(method, nrows, epochs):
             callbacks=callbacks,
             verbose=1
         )
+        model.load_weights('weights/descriptors_initial.h5')
         print()
 
     model.save('weights/descriptors.h5')
