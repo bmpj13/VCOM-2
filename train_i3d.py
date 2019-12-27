@@ -49,7 +49,7 @@ def run(method, nrows, epochs):
         #     # "no longer improving" being further defined as "for at least 20 epochs"
         #     patience=20,
         #     verbose=1),
-        CSVLogger('results/{}_i3d.csv'.format(method), append=True, separator=';')
+        CSVLogger('results/{}_i3d.csv'.format(method), append=False, separator=';')
     ]
 
     print()

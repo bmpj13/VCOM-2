@@ -58,7 +58,7 @@ def run(method, nrows, epochs):
         #     # "no longer improving" being further defined as "for at least 20 epochs"
         #     patience=20,
         #     verbose=1),
-        CSVLogger('results/multimodal.csv', append=True, separator=';')
+        CSVLogger('results/multimodal.csv', append=False, separator=';')
     ]
 
     print()
