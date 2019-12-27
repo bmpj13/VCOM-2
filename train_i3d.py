@@ -48,7 +48,7 @@ def run(method, nrows, epochs, optimizer, trainable):
     model.summary()
 
     callbacks = [
-        CSVLogger('results/' + NAME + '.csv', append=False, separator=';')
+        CSVLogger('results/' + NAME + '.csv', append=True, separator=',')
     ]
 
     print()
