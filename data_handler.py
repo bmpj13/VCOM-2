@@ -2,7 +2,7 @@ import sys
 import pandas as pd
 from constants import TRAIN_NODULES_PATH, SCAN_CUBES_PATH, FOLDS_PATH
 from sklearn.model_selection import train_test_split
-from data_generator import ScanDataGenerator, MultimodalDataGenerator, DescriptorsDataGenerator
+from data_generator import ScanDataGenerator, MultimodalDataGenerator, DescriptorsDataGenerator, SegmentationDataGenerator
 
 
 def getTrainNodules(path = TRAIN_NODULES_PATH, nrows = None):
@@ -75,6 +75,11 @@ def getDataGenerators(train, valid, classes, method = 'scan_cubes', batch_size =
     elif method == 'descriptors':
         training_generator = DescriptorsDataGenerator(X_train, y_train, batch_size, classes)
         validation_generator = DescriptorsDataGenerator(X_valid, y_valid, batch_size, classes)
+    
+    elif method == 'segmentation':
+        training_generator = SegmentationDataGenerator(X_train, batch_size)
+        validation_generator = SegmentationDataGenerator(X_valid, batch_size)
+    
     else:
         sys.exit('Method not available')
 

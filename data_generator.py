@@ -47,6 +47,15 @@ class DataGenerator(ABC, keras.utils.Sequence):
 
         return batch_y
 
+    def normalize(self, file_path, path):
+
+        img = np.load(path + file_path)
+        img = img.astype(np.float32)
+        img = (img - img.min()) * ((img.max() - img.min()))
+        img.shape = img.shape + (1,)
+
+        return img
+
 class ScanDataGenerator(DataGenerator) :
     def __init__(self, file_paths, labels, batch_size, classes, use_mask = False) :
         self.file_paths = file_paths
@@ -111,3 +120,21 @@ class DescriptorsDataGenerator(DataGenerator) :
         batch_y = self.computeOneHotLabels(batch_labels, self.classes)
         
         return batch_x, batch_y
+
+class SegmentationDataGenerator(DataGenerator) :
+    
+    def __init__(self, file_paths, batch_size) :
+        self.file_paths = file_paths
+        self.batch_size = batch_size
+
+    def __len__(self) :
+        return (np.ceil(len(self.file_paths) / float(self.batch_size))).astype(np.int)
+
+    def __getitem__(self, idx) :
+        
+        batch_files = self.file_paths[idx * self.batch_size : (idx+1) * self.batch_size]
+        batch_x = np.array([ self.normalize(file_path, SCAN_CUBES_PATH) for file_path in batch_files ])
+        batch_y = np.array([ self.normalize(file_path, MASK_CUBES_PATH) for file_path in batch_files ])
+
+        return batch_x, batch_y   
+             

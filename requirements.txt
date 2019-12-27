@@ -5,3 +5,4 @@ matplotlib==3.1.1
 numpy==1.16.4
 scikit_learn==0.22
 SimpleITK==1.2.4
+scikit-image==0.16.2
