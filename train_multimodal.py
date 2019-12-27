@@ -48,7 +48,17 @@ def run(method, nrows, epochs):
     model = Model(inputs=[base_model1.input, base_model2.input], outputs=predictions)
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-    print()
+    model.summary()
+
+    callbacks = [
+        keras.callbacks.EarlyStopping(
+            # Stop training when `val_loss` is no longer improving
+            monitor='val_loss',
+            # "no longer improving" being further defined as "for at least 4 epochs"
+            patience=4,
+            verbose=1)
+    ]
+
     print()
     for fold in range(0, NUM_FOLDS):
         train, valid = getFoldNodules(nrows=nrows, fold=fold, shuffle=True)
@@ -64,6 +74,7 @@ def run(method, nrows, epochs):
             validation_steps=ceil(valid[0].size / BATCH_SIZE),
 
             epochs=epochs,
+            callbacks=callbacks,
             verbose=1
         )
         print()
