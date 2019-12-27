@@ -6,6 +6,7 @@ import keras
 from keras.callbacks import CSVLogger
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling3D, Dropout, concatenate
+from keras.optimizers import SGD
 from models.i3d import Inception_Inflated3d as I3D
 from math import ceil
 from constants import TRAIN_NODULES_PATH, SCAN_CUBES_PATH
@@ -13,10 +14,11 @@ from data_handler import getTrainNodules, splitData, getDataGenerators, getFoldN
 
 BATCH_SIZE = 32
 IMAGE_SIZE = 80
-DROPOUT_PROB = 0.2
+DROPOUT_PROB = 0.3
 NUM_FOLDS = 4
 
 def run(method, nrows, epochs):
+    NAME = 'multimodal'
     _, classes = getTrainNodules(TRAIN_NODULES_PATH, nrows = nrows)
 
     # Load the I3D model (for scan modality)
@@ -24,7 +26,6 @@ def run(method, nrows, epochs):
 
     for layer in base_model1.layers:
         layer.name = 'scan_' + layer.name
-        layer.trainable = False
 
     x1 = base_model1.output
     x1 = GlobalAveragePooling3D()(x1)
@@ -35,7 +36,6 @@ def run(method, nrows, epochs):
 
     for layer in base_model2.layers:
         layer.name = 'mask_' + layer.name
-        # layer.trainable = False
 
     x2 = base_model2.output
     x2 = GlobalAveragePooling3D()(x2)
@@ -44,25 +44,20 @@ def run(method, nrows, epochs):
     # Merge subnetworks
     x = concatenate([x1, x2])
     x = Dense(2048, activation='relu')(x)
+    x = Dropout(DROPOUT_PROB)(x)
     predictions = Dense(len(classes), activation='softmax')(x)
 
     model = Model(inputs=[base_model1.input, base_model2.input], outputs=predictions)
-    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=SGD(), loss='categorical_crossentropy', metrics=['accuracy'])
 
     model.summary()
 
     callbacks = [
-        # keras.callbacks.EarlyStopping(
-        #     # Stop training when `val_loss` is no longer improving
-        #     monitor='val_loss',
-        #     # "no longer improving" being further defined as "for at least 20 epochs"
-        #     patience=20,
-        #     verbose=1),
-        CSVLogger('results/multimodal.csv', append=False, separator=';')
+        CSVLogger('results/' + NAME + '.csv', append=False, separator=';')
     ]
 
     print()
-    model.save_weights('weights/multimodal_initial.h5')
+    model.save_weights('weights/' + NAME + '_initial.h5')
     for fold in range(0, NUM_FOLDS):
         train, valid = getFoldNodules(nrows=nrows, fold=fold, shuffle=True)
         training_generator, validation_generator = getDataGenerators(train, valid, classes, method=method, batch_size=BATCH_SIZE)
@@ -81,10 +76,10 @@ def run(method, nrows, epochs):
             shuffle=True,
             verbose=1
         )
-        model.load_weights('weights/multimodal_initial.h5')
+        model.load_weights('weights/' + NAME + '_initial.h5')
         print()
 
-    model.save('weights/multimodal.h5')
+    model.save('weights/' + NAME + '.h5')
 
 
 parser = argparse.ArgumentParser(description="I3D Neural Network for the LNDb challenge C")
