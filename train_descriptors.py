@@ -32,8 +32,8 @@ def run(method, nrows, epochs):
         keras.callbacks.EarlyStopping(
             # Stop training when `val_loss` is no longer improving
             monitor='val_loss',
-            # "no longer improving" being further defined as "for at least 4 epochs"
-            patience=4,
+            # "no longer improving" being further defined as "for at least 20 epochs"
+            patience=20,
             verbose=1)
     ]
 
