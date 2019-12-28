@@ -12,7 +12,7 @@ from math import ceil
 from constants import TRAIN_NODULES_PATH, SCAN_CUBES_PATH
 from data_handler import getTrainNodules, splitData, getDataGenerators, getFoldNodules
 
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 IMAGE_SIZE = 80
 DROPOUT_PROB = 0.3
 NUM_FOLDS = 4
@@ -43,7 +43,7 @@ def run(method, nrows, epochs):
 
     # Merge subnetworks
     x = concatenate([x1, x2])
-    x = Dense(2048, activation='relu')(x)
+    x = Dense(1024, activation='relu')(x)
     x = Dropout(DROPOUT_PROB)(x)
     predictions = Dense(len(classes), activation='softmax')(x)
 
