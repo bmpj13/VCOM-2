@@ -13,9 +13,6 @@ import matplotlib.pyplot as plt
 BATCH_SIZE = 16
 NUM_FOLDS = 4
  
-weights_path = 'weights/3D-Unet.h5'
-log_path = 'logs/3D-Unet.txt'
-plot_path = 'imgs/'
  
 def plotTrainingHistory(fold, history):
     
@@ -23,14 +20,14 @@ def plotTrainingHistory(fold, history):
     plt.plot(history.history['val_loss'], label='test')
     plt.legend()
    
-    plt.savefig(plot_path + "dice_coeff"+ str(fold) +".png")
+    plt.savefig("imgs/dice_coeff"+ str(fold) +".png")
 
 
 def run(epochs):
 
     # Define callbacks
-    model_checkpoint = ModelCheckpoint(weights_path, verbose=1, monitor='val_loss', save_best_only=True)
-    csv_logger = CSVLogger(log_path, separator=',', append=False)
+    model_checkpoint = ModelCheckpoint('weights/3D-Unet.h5', verbose=1, monitor='val_loss', save_best_only=True)
+    csv_logger = CSVLogger('results/3D-Unet.txt', separator=',', append=False)
 
     callbacks_list = [model_checkpoint, csv_logger]
 
