@@ -49,10 +49,20 @@ img_mask_test[img_mask_test<0.5] = 0
 # original mask
 img_mask = np.load(MASK_CUBES_PATH+file)
     
-fig, axs = plt.subplots(2,3)
+fig, axs = plt.subplots(3,3)
 axs[0,0].imshow(org[int(org.shape[0]/2),:,:])
 axs[1,0].imshow(img_mask[int(img_mask.shape[0]/2),:,:])
-axs[1,1].imshow(img_mask_test[int(img_mask_test.shape[0]/2),:,:])
+axs[2,0].imshow(img_mask_test[int(img_mask_test.shape[0]/2),:,:])
+
+axs[0,1].imshow(org[:,int(org.shape[0]/2),:])
+axs[1,1].imshow(img_mask[:,int(img_mask.shape[0]/2),:])
+axs[2,1].imshow(img_mask_test[:,int(img_mask_test.shape[0]/2),:])
+
+axs[0,2].imshow(org[:,:,int(org.shape[0]/2)])
+axs[1,2].imshow(img_mask[:,:,int(img_mask.shape[0]/2)])
+axs[2,2].imshow(img_mask_test[:,:,int(img_mask_test.shape[0]/2)])
+
+ 
 
 plt.show()
  
