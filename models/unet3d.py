@@ -76,8 +76,8 @@ def get_unet(input_size = (80, 80, 80, 1)):
     model.summary()
     plot_model(model, to_file='unet_model.png')
 
-    model.compile(optimizer=Adam(lr=1e-5, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.000000199), 
-        loss='binary_crossentropy', 
-        metrics=[dice_coef])
+    model.compile(optimizer=Adam(lr=1e-5), 
+        loss=dice_coef_loss, 
+        metrics=[dice_coef, 'accuracy'])
 
     return model

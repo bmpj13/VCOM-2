@@ -57,7 +57,7 @@ def run(epochs):
     
     
 parser = argparse.ArgumentParser(description="3D-UNet for the LNDb challenge B")
-parser.add_argument('--epochs', help="Number of training epochs", default=3, type=int)
+parser.add_argument('--epochs', help="Number of training epochs", default=20, type=int)
 args = parser.parse_args()
 
 run(args.epochs)
