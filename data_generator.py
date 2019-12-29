@@ -50,10 +50,13 @@ class DataGenerator(ABC, keras.utils.Sequence):
     def normalize(self, file_path, path):
 
         img = np.load(path + file_path)
+        
+        img = img.astype(np.float64)
+        img = (img - img.min()) * (255.0 / (img.max() - img.min()))
         img = img.astype(np.float32)
-        img = (img - img.min()) * ((img.max() - img.min()))
-        img.shape = img.shape + (1,)
-
+        img /= 255.
+        img.shape =  img.shape + (1,)
+        
         return img
 
 class ScanDataGenerator(DataGenerator) :
