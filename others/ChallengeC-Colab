@@ -1,0 +1,285 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "VCOM-ChallengeC.ipynb",
+      "provenance": [],
+      "toc_visible": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "accelerator": "GPU"
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "xgTgGmUpeg3N",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Environment setup"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "dFhwJlBJ0eNg",
+        "colab_type": "text"
+      },
+      "source": [
+        "Mount Google Drive"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "7NOZryRlscCq",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "m9pmFnij0g25",
+        "colab_type": "text"
+      },
+      "source": [
+        "Go to project's root folder"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "lF9AAvXi0PsP",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "cd /content/drive/\"My Drive\"/Proj2"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "ADcZ85sN0aRN",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "ls"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "cWXWcL9X1ALW",
+        "colab_type": "text"
+      },
+      "source": [
+        "Install dependencies"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "jzPGxquE1CQX",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "!pip3 install scipy==1.3.0\n",
+        "!pip3 install Keras==2.3.1\n",
+        "!pip3 install pandas==0.25.1\n",
+        "!pip3 install matplotlib==3.1.1\n",
+        "!pip3 install numpy==1.16.4\n",
+        "!pip3 install scikit_learn==0.22\n",
+        "!pip3 install SimpleITK==1.2.4\n",
+        "!pip3 install scikit-image==0.16.2"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "LE3rJ2FIfP9p",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Model: I3D vs Custom CNN3D"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "NQFwSV_xfVKD",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "!python3 train_i3d.py --method scan_cubes --epochs 20"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "vxOo1Q8SfaNW",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "!python3 train_cnn3d.py --method scan_cubes --epochs 10"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "l65dAJoLe-Nu",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Trainable layers"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "w-vyDtDYkfUE",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "!python3 train_i3d.py --method scan_cubes --epochs 10 --no-layer-training"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Xgl1-Ze3eZUQ",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Optimizer: Adam vs SGD\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "SAtsez6req2I",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "!python3 train_i3d.py --method scan_cubes --epochs 10 --optimizer adam"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "qre1vdzPe2nQ",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "!python3 train_i3d.py --method scan_cubes --epochs 10 --optimizer sgd"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "3Njr-gq_fEda",
+        "colab_type": "text"
+      },
+      "source": [
+        "# Approaches"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "T1YCzGExKK-q",
+        "colab_type": "text"
+      },
+      "source": [
+        "I3D proved to be better than CNN3D, so we'll use the former for the classification problem"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "APOQrS1MM55O",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "!python3 train_i3d.py --method scan_cubes --epochs 10"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "P_RhHcQKKAs_",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "!python3 train_i3d.py --method masked_scan_cubes --epochs 10"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "08pVuuooXlw4",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "!python3 train_multimodal.py --epochs 10"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "LM1kVUrPXp0i",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "!python3 train_descriptors.py --epochs 25"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    }
+  ]
+}
