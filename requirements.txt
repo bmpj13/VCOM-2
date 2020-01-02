@@ -6,3 +6,4 @@ numpy==1.16.4
 scikit_learn==0.22
 SimpleITK==1.2.4
 scikit-image==0.16.2
+git+https://www.github.com/farizrahman4u/keras-contrib.git

@@ -10,19 +10,10 @@ from data_handler import getDataGenerators, getFoldNodules
 from keras.callbacks import ModelCheckpoint, CSVLogger, EarlyStopping
 import matplotlib.pyplot as plt
 
-BATCH_SIZE = 16
+BATCH_SIZE = 3
 NUM_FOLDS = 4
  
  
-def plotTrainingHistory(fold, history):
-    
-    plt.plot(history.history['loss'], label='train')
-    plt.plot(history.history['val_loss'], label='test')
-    plt.legend()
-   
-    plt.savefig("imgs/dice_coeff"+ str(fold) +".png")
-
-
 def run(epochs):
 
     # Define callbacks
@@ -33,6 +24,8 @@ def run(epochs):
 
     # Load the 3D-UNet model
     model = get_unet()
+
+    model.save_weights('weights/___initial__.h5')
 
     # Train model
     for fold in range(0, NUM_FOLDS):
@@ -51,13 +44,13 @@ def run(epochs):
             verbose=1,
             callbacks=callbacks_list
         )
-
+        
         print('-'*30)
-        # plotTrainingHistory(fold, history)
-    
+        model.load_weights('weights/___initial__.h5')
+
     
 parser = argparse.ArgumentParser(description="3D-UNet for the LNDb challenge B")
-parser.add_argument('--epochs', help="Number of training epochs", default=20, type=int)
+parser.add_argument('--epochs', help="Number of training epochs", default=15, type=int)
 args = parser.parse_args()
 
 run(args.epochs)

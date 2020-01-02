@@ -55,7 +55,7 @@ class DataGenerator(ABC, keras.utils.Sequence):
         img = (img - img.min()) * (255.0 / (img.max() - img.min()))
         img = img.astype(np.float32)
         img /= 255.
-        img.shape =  img.shape + (1,)
+        img.shape =  (1,) + img.shape
         
         return img
 
