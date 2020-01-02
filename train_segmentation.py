@@ -25,7 +25,7 @@ def run(epochs):
     # Load the 3D-UNet model
     model = get_unet()
 
-    model.save_weights('weights/___initial__.h5')
+    model.save_weights('weights/initial.h5')
 
     # Train model
     for fold in range(0, NUM_FOLDS):
@@ -44,9 +44,9 @@ def run(epochs):
             verbose=1,
             callbacks=callbacks_list
         )
-        
+
         print('-'*30)
-        model.load_weights('weights/___initial__.h5')
+        model.load_weights('weights/initial.h5')
 
     
 parser = argparse.ArgumentParser(description="3D-UNet for the LNDb challenge B")
